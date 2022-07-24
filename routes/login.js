@@ -1,4 +1,5 @@
 import express from 'express'
+import { loginUser } from '../controllers/authController.js'
 
 const router = express.Router()
 
@@ -6,8 +7,6 @@ router.get('/', (req, res) => {
   res.send('Estamos obteniendo tu info campeon')
 })
 
-router.post('/', (req, res) => {
-  res.send('te estas logeando wacho')
-})
+router.post('/', loginUser)
 
 export const loginRouter = router

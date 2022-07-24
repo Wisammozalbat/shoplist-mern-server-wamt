@@ -1,7 +1,11 @@
-import jws from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 import asyncHandler from 'express-async-handler'
 import User from '../models/User.js'
+
+export const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: 36000 })
+}
 
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, lastname, email, password } = req.body
@@ -13,9 +17,9 @@ export const registerUser = asyncHandler(async (req, res) => {
   }
 
   // check if user exists
-  const userExists = await User.findOne({ email })
+  const user = await User.findOne({ email })
 
-  if (userExists) {
+  if (user) {
     res.status(400)
     throw new Error('User already exists')
   }
@@ -30,8 +34,8 @@ export const registerUser = asyncHandler(async (req, res) => {
     lastname,
     email,
     password: hashedPassword,
+    token: generateToken(user._id),
   })
-  console.log(userCreated)
 
   if (userCreated) {
     res.status(201).json({
@@ -43,5 +47,33 @@ export const registerUser = asyncHandler(async (req, res) => {
   } else {
     res.status(400)
     throw new Error('Invalid user data')
+  }
+})
+
+export const loginUser = asyncHandler(async (req, res) => {
+  const { email, password } = req.body
+
+  // verfiy if ther is an user with this email
+  const user = await User.findOne({ email })
+
+  if (!user) {
+    res.status(400)
+    throw new Error('No user with this email')
+  }
+
+  // return true if match, false if not
+  const passwordMatch = await bcrypt.compare(password, user.password)
+
+  if (passwordMatch) {
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      lastname: user.lastname,
+      email: user.email,
+      token: generateToken(user._id),
+    })
+  } else {
+    res.status(400)
+    throw new Error('Invalid Credentials')
   }
 })
