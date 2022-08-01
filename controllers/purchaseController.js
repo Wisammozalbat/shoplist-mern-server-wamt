@@ -46,7 +46,7 @@ export const getPurchases = async (req, res) => {
       .status(200)
       .json({ msg: 'puchases found', data: purchasesMapperWithProducts })
   } catch (error) {
-    res.send('error')
+    res.status(500).json({ msg: 'error' })
   }
 }
 
@@ -83,7 +83,7 @@ export const getPurchaseById = async (req, res) => {
       .status(200)
       .json({ msg: 'Purchase fetched', data: purchaseWithProducts })
   } catch (error) {
-    res.status(500).json({ msg: 'Could not get purchase' })
+    res.status(500).json({ msg: 'Could not get the purchase' })
   }
 }
 

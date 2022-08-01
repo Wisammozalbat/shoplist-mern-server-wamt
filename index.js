@@ -3,7 +3,6 @@ import cors from 'cors'
 import connectDB from './database.js'
 import dotenv from 'dotenv'
 import {
-  homeRouter,
   loginRouter,
   productsRouter,
   purchaseRouter,
@@ -27,8 +26,6 @@ app.use('/products', productsRouter)
 app.use('/purchase', purchaseRouter)
 app.use('/login', loginRouter)
 app.use('/register', registerRouter)
-app.use('/', homeRouter)
-
 //stating the server
 const port = process.env.PORT || 4000
 

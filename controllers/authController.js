@@ -34,15 +34,15 @@ export const registerUser = asyncHandler(async (req, res) => {
     lastname,
     email,
     password: hashedPassword,
-    token: generateToken(user._id),
   })
 
   if (userCreated) {
     res.status(201).json({
-      _id: userCreated.id,
+      _id: userCreated._id,
       name: userCreated.name,
       lastname: userCreated.lastname,
       email: userCreated.email,
+      token: generateToken(userCreated._id),
     })
   } else {
     res.status(400)
@@ -73,7 +73,17 @@ export const loginUser = asyncHandler(async (req, res) => {
       token: generateToken(user._id),
     })
   } else {
-    res.status(400)
-    throw new Error('Invalid Credentials')
+    res.status(400).json({ msg: 'error' })
   }
 })
+
+export const deleteUser = async (req, res) => {
+  const userId = req.params.id
+
+  try {
+    const userDeleted = await User.findOneAndDelete({ _id: userId })
+    res.status(201).json({ msg: 'user deleted', userDeleted })
+  } catch (error) {
+    res.status(400).json({ msg: 'error deleting user' })
+  }
+}

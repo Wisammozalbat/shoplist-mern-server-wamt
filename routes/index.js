@@ -1,4 +1,3 @@
-export * from './home.js'
 export * from './login.js'
 export * from './purchase.js'
 export * from './products.js'
